@@ -25,15 +25,35 @@ class db_class:
             sum += item.sum
         return sum
 
-def button_add_item(db):
-    db.add_item(213)
+def update_listbox(db, lb):
+    print('Update listbox')
+    lb.delete(0, tk.END)
+    for item in db.get_items():
+        lb.insert(tk.END, item)
 
-def button_close_click(db):
+def button_add_item(db):
+    db.add_item(sum=213, cat='Food')
+
+def button_add_item_click(window, db, lb_items):
+    db.add_item(123, 'Food')
+    update_listbox(db, lb_items)
+    window.destroy()
+
+def button_number_click(number):
+    print(number)
+
+def button_close_click(db, lb_items):
     window_add = tk.Toplevel(top)
     window_add.title('Add new item')
+    window_add.wm_attributes("-topmost", True) #always on top
+    window_add.grab_set_global() 
+    # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info = tk.Label(window_add, text='window add')
-    button_add = tk.Button(window_add, text='add', command=lambda:button_add_item_click(db))
+    button_add = tk.Button(window_add, text='add', command=lambda:button_add_item_click(window_add, db, lb_items))
 
+    buttons = range(0, 10)
+    for button in buttons:
+        tk.Button(window_add, text=str(button), command=lambda button=button:button_number_click(button)).grid(row=0, column=button)
     label_info.grid(row=0, column=0)
     button_add.grid(row=1, column=0)
 
@@ -48,7 +68,8 @@ if __name__ == '__main__':
 
     var = tk.StringVar(value=db.get_items())
     lb_items = tk.Listbox(top, height=30, width=30, listvariable = var)
-    button_close = tk.Button(top, text='add item', command=lambda: button_close_click(db))
+    lb_items.bind('<<ListboxSelect>>', lambda event:update_listbox(db, event.widget))
+    button_close = tk.Button(top, text='add item', command=lambda: button_close_click(db, lb_items))
     label_sum = tk.Label(top, text=f'summa: {db.get_total()} kr')
 
     lb_items.grid(row = 0, column = 0, sticky = 'W')
