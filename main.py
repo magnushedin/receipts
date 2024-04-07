@@ -2,19 +2,37 @@ import tkinter as tk
 import datetime as dt
 
 class item_class:
-    def __init__(self, sum, cat='food'):
+    def __init__(self, sum, cat='food', date=0):
         self.id = ''
-        self.date = dt.datetime.now().strftime('%Y-%m-%d')
+        if date == 0:
+            self.date = dt.datetime.now().strftime('%Y-%m-%d')
+        else:
+            self.date = date
         self.category = cat
         self.sum = sum
 
 
 class db_class:
-    def __init__(self):
+    def __init__(self, filename='db.txt'):
         self.db = []
+        self.filename = filename
+
+    def load_file(self, filename):
+        f = open(filename, 'r')
+        for line in f:
+            (date, cat, sum) = line.split(' ')
+            self.db.append(item_class(sum=float(sum), cat=cat, date=date))
+        f.close()
     
+    def write_to_file(self, filename, item):
+        f = open(filename, 'a')
+        f.write(f'{item.date} {item.category} {item.sum}\n')
+        f.close()
+
     def add_item(self, sum, cat):
-        self.db.append(item_class(sum, cat))
+        tmp_item = item_class(sum, cat)
+        self.db.append(tmp_item)
+        self.write_to_file(self.filename, tmp_item)
     
     def get_items(self):
         return [f'{item.date}: {item.category} = {item.sum}' for item in self.db]
@@ -60,9 +78,7 @@ def button_close_click(db, lb_items):
 
 if __name__ == '__main__':
     db = db_class()
-    db.add_item(100, 'food')
-    db.add_item(123, 'food')
-    db.add_item(1024, 'food')
+    db.load_file('db.txt')
 
     top = tk.Tk()
 
