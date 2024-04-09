@@ -29,10 +29,14 @@ class db_class:
         f.write(f'{item.date} {item.category} {item.sum}\n')
         f.close()
 
-    def add_item(self, sum, cat):
+    def create_item(self, sum, cat):
         tmp_item = item_class(sum, cat)
         self.db.append(tmp_item)
         self.write_to_file(self.filename, tmp_item)
+    
+    def add_item(self, item):
+        self.db.append(item)
+        self.write_to_file(self.filename, item)
     
     def get_items(self):
         return [f'{item.date}: {item.category} = {item.sum}' for item in self.db]
@@ -49,29 +53,29 @@ def update_listbox(db, lb):
     for item in db.get_items():
         lb.insert(tk.END, item)
 
-def button_add_item(db):
-    db.add_item(sum=213, cat='Food')
-
-def button_add_item_click(window, db, lb_items):
-    db.add_item(123, 'Food')
+def button_add_item_click(window, db, lb_items, itm):
+    db.add_item(itm)
     update_listbox(db, lb_items)
     window.destroy()
 
-def button_number_click(number):
-    print(number)
+def button_number_click(number, itm, lbl):
+    itm.sum += number
+    lbl.config(text = itm.sum)
+    print(itm.sum)
 
 def button_close_click(db, lb_items):
+    itm = item_class(0)
     window_add = tk.Toplevel(top)
     window_add.title('Add new item')
     window_add.wm_attributes("-topmost", True) #always on top
     window_add.grab_set_global() 
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
-    label_info = tk.Label(window_add, text='window add')
-    button_add = tk.Button(window_add, text='add', command=lambda:button_add_item_click(window_add, db, lb_items))
+    label_info = tk.Label(window_add, text=itm.sum)
+    button_add = tk.Button(window_add, text='add', command=lambda:button_add_item_click(window_add, db, lb_items, itm))
 
     buttons = range(0, 10)
     for button in buttons:
-        tk.Button(window_add, text=str(button), command=lambda button=button:button_number_click(button)).grid(row=0, column=button)
+        tk.Button(window_add, text=str(button), command=lambda button=button, itm=itm, label_info=label_info:button_number_click(button, itm, label_info)).grid(row=2, column=button+1)
     label_info.grid(row=0, column=0)
     button_add.grid(row=1, column=0)
 
