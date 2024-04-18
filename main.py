@@ -72,11 +72,24 @@ def button_show_add_window_click(db, lb_items):
     window_add = tk.Toplevel(top)
     window_add.geometry('400x400')
     window_add.title('Add new item')
+
+    window_add.rowconfigure(0, minsize=50)
+    window_add.rowconfigure(1, minsize=50)
+    window_add.rowconfigure(2, minsize=50)
+    window_add.rowconfigure(3, minsize=50)
+    window_add.rowconfigure(4, minsize=50)
+    window_add.rowconfigure(5, minsize=50)
+    window_add.rowconfigure(6, minsize=50)
+    window_add.columnconfigure(0, minsize=50)
+    window_add.columnconfigure(1, minsize=50)
+    window_add.columnconfigure(2, minsize=50)
+    window_add.columnconfigure(3, minsize=50)
+
     window_add.wm_attributes("-topmost", True) #always on top
     window_add.grab_set_global() 
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info =     tk.Label(window_add, text=itm.sum)
-    label_category = tk.Label(window_add, text="choose a category")
+    label_category = tk.Label(window_add, text="mat")
     button_add =     tk.Button(window_add, text='add', command=lambda:button_add_item_click(window_add, db, lb_items, itm))
 
     btn_zero =  tk.Button(window_add, text="0", command=lambda:button_number_click(0, itm, label_info))
@@ -90,8 +103,8 @@ def button_show_add_window_click(db, lb_items):
     btn_eight = tk.Button(window_add, text="8", command=lambda:button_number_click(8, itm, label_info))
     btn_nine =  tk.Button(window_add, text="9", command=lambda:button_number_click(9, itm, label_info))
 
-    btn_food =   tk.Button(window_add, text="food", command=lambda:button_category_click('food', itm, label_category))
-    btn_coffe =  tk.Button(window_add, text="coffé", command=lambda:button_category_click('coffé', itm, label_category))
+    btn_food =   tk.Button(window_add, text="mat", command=lambda:button_category_click('mat', itm, label_category), bg="GREEN")
+    btn_coffe =  tk.Button(window_add, text="kaffe", command=lambda:button_category_click('kaffe', itm, label_category))
     btn_bubbel = tk.Button(window_add, text="bubbel", command=lambda:button_category_click('bubbel', itm, label_category))
 
     # buttons = range(0, 10)
@@ -105,16 +118,16 @@ def button_show_add_window_click(db, lb_items):
     btn_coffe.grid( row=3, column=0)
     btn_bubbel.grid(row=4, column=0)
 
-    btn_one.grid(   row=3, column=1)
-    btn_two.grid(   row=3, column=2)
-    btn_three.grid( row=3, column=3)
-    btn_four.grid(  row=4, column=1)
-    btn_five.grid(  row=4, column=2)
-    btn_six.grid(   row=4, column=3)
-    btn_seven.grid( row=5, column=1)
-    btn_eight.grid( row=5, column=2)
-    btn_nine.grid(  row=5, column=3)
-    btn_zero.grid(  row=6, column=2)
+    btn_one.grid(   row=3, column=1, sticky="NSEW")
+    btn_two.grid(   row=3, column=2, sticky="NSEW")
+    btn_three.grid( row=3, column=3, sticky="NSEW")
+    btn_four.grid(  row=4, column=1, sticky="NSEW")
+    btn_five.grid(  row=4, column=2, sticky="NSEW")
+    btn_six.grid(   row=4, column=3, sticky="NSEW")
+    btn_seven.grid( row=5, column=1, sticky="NSEW")
+    btn_eight.grid( row=5, column=2, sticky="NSEW")
+    btn_nine.grid(  row=5, column=3, sticky="NSEW")
+    btn_zero.grid(  row=6, column=2, sticky="NSEW")
 
 
 if __name__ == '__main__':
