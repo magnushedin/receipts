@@ -1,5 +1,6 @@
 import tkinter as tk
 import datetime as dt
+import os
 
 class item_class:
     def __init__(self, sum, cat='food', date=0):
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     db.load_file('db.txt')
 
     top = tk.Tk()
-    top.title("kvitto registrering")
+    top.title(f"kvitto registrering, pid: {os.getpid()}")
 
     var = tk.StringVar(value=db.get_items())
     lb_items = tk.Listbox(top, height=30, width=30, listvariable = var)
