@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 import datetime as dt
 import os
 
@@ -137,15 +138,23 @@ if __name__ == '__main__':
     db.load_file('db.txt')
 
     top = tk.Tk()
+    top.attributes('-zoomed', True)
     top.title(f"kvitto registrering, pid: {os.getpid()} v{version}")
-
+    
+    print(font.families())
+    
+    top.rowconfigure(0, minsize=50)
+    top.rowconfigure(1, minsize=50)
+    top.rowconfigure(2, minsize=100)
+    top.rowconfigure(3, minsize=50)
+    
     var = tk.StringVar(value=db.get_items())
-    lb_items = tk.Listbox(top, height=30, width=30, listvariable = var)
+    lb_items = tk.Listbox(top, height=20, width=30, listvariable = var, font=('Courier New', 20))
     lb_items.bind('<<ListboxSelect>>', lambda event:update_listbox(db, event.widget))
-    button_show_add_window = tk.Button(top, text='add item', command=lambda: button_show_add_window_click(db, lb_items))
-    label_sum = tk.Label(top, text=f'summa: {db.get_total()} kr')
+    button_show_add_window = tk.Button(top, text='add item', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items))
+    label_sum = tk.Label(top, text=f'summa: {db.get_total()} kr', font=('Courier New', 20))
 
-    lb_items.grid(row = 0, column = 0, sticky = 'W')
-    label_sum.grid(row = 1, column = 0, sticky = 'W')
-    button_show_add_window.grid(row = 2, column = 0, sticky = 'W')
+    lb_items.grid(row = 0, column = 0, sticky = 'NSWE')
+    label_sum.grid(row = 1, column = 0, sticky = 'NSWE')
+    button_show_add_window.grid(row = 2, column = 0, sticky = 'NSWE')
     top.mainloop()
