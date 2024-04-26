@@ -87,7 +87,7 @@ def button_show_add_window_click(db, lb_items):
     window_add.columnconfigure(3, minsize=50)
 
     window_add.wm_attributes("-topmost", True) #always on top
-    window_add.grab_set_global() 
+    #window_add.grab_set_global()
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info =     tk.Label(window_add, text=itm.sum)
     label_category = tk.Label(window_add, text="mat")
@@ -132,11 +132,12 @@ def button_show_add_window_click(db, lb_items):
 
 
 if __name__ == '__main__':
+    version = '1.0.0'
     db = db_class()
     db.load_file('db.txt')
 
     top = tk.Tk()
-    top.title(f"kvitto registrering, pid: {os.getpid()}")
+    top.title(f"kvitto registrering, pid: {os.getpid()} v{version}")
 
     var = tk.StringVar(value=db.get_items())
     lb_items = tk.Listbox(top, height=30, width=30, listvariable = var)
