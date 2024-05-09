@@ -25,7 +25,7 @@ class db_class:
             (date, cat, sum) = line.split(' ')
             self.db.append(item_class(sum=float(sum), cat=cat, date=date))
         f.close()
-    
+
     def write_to_file(self, filename, item):
         f = open(filename, 'a')
         f.write(f'{item.date} {item.category} {item.sum}\n')
@@ -35,19 +35,23 @@ class db_class:
         tmp_item = item_class(sum, cat)
         self.db.append(tmp_item)
         self.write_to_file(self.filename, tmp_item)
-    
+
     def add_item(self, item):
         self.db.append(item)
         self.write_to_file(self.filename, item)
-    
+
     def get_items(self):
         return [f'{item.date}: {item.category} = {item.sum}' for item in self.db]
-    
+
     def get_total(self):
         sum = 0
         for item in self.db:
             sum += item.sum
         return sum
+
+def update_label_sum(db, lbl_sum):
+    lbl_sum.config(text = f'summa: {db.get_total()}')
+    print(f'new sum: {db.get_total()}')
 
 def update_listbox(db, lb):
     print('Update listbox')
@@ -55,9 +59,10 @@ def update_listbox(db, lb):
     for item in db.get_items():
         lb.insert(tk.END, item)
 
-def button_add_item_click(window, db, lb_items, itm):
+def button_add_item_click(window, db, lb_items, itm, lbl_sum):
     db.add_item(itm)
     update_listbox(db, lb_items)
+    update_label_sum(db, lbl_sum)
     window.destroy()
 
 def button_number_click(number, itm, lbl):
@@ -69,11 +74,16 @@ def button_category_click(category, item, label):
     item.category = category
     label.config(text = item.category)
 
-def button_show_add_window_click(db, lb_items):
+def button_show_add_window_click(db, lb_items, lbl_sum):
+
+    def on_closing():
+        print("on closing")
     itm = item_class(0)
     window_add = tk.Toplevel(top)
     window_add.geometry('900x800+0+0')
     window_add.title('Add new item')
+
+    window_add.protocol("WM_DELETE_WINDOW", on_closing)
 
     window_add.rowconfigure(0, minsize=150)
     window_add.rowconfigure(1, minsize=150)
@@ -89,13 +99,13 @@ def button_show_add_window_click(db, lb_items):
     window_add.columnconfigure(4, minsize=150)
     window_add.columnconfigure(5, minsize=10)
     window_add.columnconfigure(6, minsize=150)
-    
+
     window_add.wm_attributes("-topmost", True) #always on top
     #window_add.grab_set_global()
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info =     tk.Label(window_add, text=itm.sum, font=('Courier New', 30))
     label_category = tk.Label(window_add, text="mat")
-    button_add =     tk.Button(window_add, text='add', font=('Courier New', 20), command=lambda:button_add_item_click(window_add, db, lb_items, itm))
+    button_add =     tk.Button(window_add, text='add', font=('Courier New', 20), command=lambda:button_add_item_click(window_add, db, lb_items, itm, lbl_sum))
 
     btn_zero =  tk.Button(window_add, text="0", command=lambda:button_number_click(0, itm, label_info))
     btn_one =   tk.Button(window_add, text="1", command=lambda:button_number_click(1, itm, label_info))
@@ -118,7 +128,7 @@ def button_show_add_window_click(db, lb_items):
     label_info.grid(row=0, column=0)
     # label_category.grid(row=0, column=1)
     button_add.grid(    row=1, column=6, rowspan=3, sticky="NSWE")
-    
+
     btn_food.grid(  row=1, column=0, sticky="NSEW")
     btn_coffe.grid( row=2, column=0, sticky="NSEW")
     btn_bubbel.grid(row=3, column=0, sticky="NSEW")
@@ -141,21 +151,22 @@ if __name__ == '__main__':
     db.load_file('db.txt')
 
     top = tk.Tk()
-    top.attributes('-zoomed', True)
+    # top.attributes('-zoomed', True)
+    top.attributes('-alpha', True)
     top.title(f"kvitto registrering, pid: {os.getpid()} v{version}")
-    
-    print(font.families())
-    
+
+    # print(font.families())
+
     top.rowconfigure(0, minsize=50)
     top.rowconfigure(1, minsize=50)
     top.rowconfigure(2, minsize=100)
     top.rowconfigure(3, minsize=50)
-    
+
     var = tk.StringVar(value=db.get_items())
     lb_items = tk.Listbox(top, height=20, width=30, listvariable = var, font=('Courier New', 20))
     lb_items.bind('<<ListboxSelect>>', lambda event:update_listbox(db, event.widget))
-    button_show_add_window = tk.Button(top, text='add item', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items))
     label_sum = tk.Label(top, text=f'summa: {db.get_total()} kr', font=('Courier New', 20))
+    button_show_add_window = tk.Button(top, text='add item', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
 
     lb_items.grid(row = 0, column = 0, sticky = 'NSWE')
     label_sum.grid(row = 1, column = 0, sticky = 'NSWE')
