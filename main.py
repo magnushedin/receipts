@@ -13,6 +13,12 @@ class item_class:
         self.category = cat
         self.sum = sum
 
+    def get_sum(self):
+        return self.sum
+
+    def delete(self):
+        self.sum = int(self.sum / 10)
+
 
 class db_class:
     def __init__(self, filename='db.txt'):
@@ -50,7 +56,7 @@ class db_class:
         return sum
 
 def update_label_sum(db, lbl_sum):
-    lbl_sum.config(text = f'summa: {db.get_total()}')
+    label_sum.config(text = f'summa: {db.get_total()}')
     print(f'new sum: {db.get_total()}')
 
 def update_listbox(db, lb):
@@ -65,10 +71,20 @@ def button_add_item_click(window, db, lb_items, itm, lbl_sum):
     update_label_sum(db, lbl_sum)
     window.destroy()
 
+def button_cancel_click(window):
+    window.destroy()
+
 def button_number_click(number, itm, lbl):
     itm.sum = itm.sum * 10 + number
     lbl.config(text = itm.sum)
     print(itm.sum)
+
+def button_comma_click(itm, lbl):
+    pass
+
+def button_delete_click(itm, lbl):
+    itm.delete()
+    lbl.config(text = itm.get_sum())
 
 def button_category_click(category, item, label):
     item.category = category
@@ -105,7 +121,8 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info =     tk.Label(window_add, text=itm.sum, font=('Courier New', 30))
     label_category = tk.Label(window_add, text="mat")
-    button_add =     tk.Button(window_add, text='add', font=('Courier New', 20), command=lambda:button_add_item_click(window_add, db, lb_items, itm, lbl_sum))
+    button_add =     tk.Button(window_add, text='Lägg till', font=('Courier New', 20), command=lambda:button_add_item_click(window_add, db, lb_items, itm, lbl_sum))
+    button_cancel =  tk.Button(window_add, text='Avbryt', font=('Courier New', 20), command=lambda:button_cancel_click(window_add))
 
     btn_zero =  tk.Button(window_add, text="0", command=lambda:button_number_click(0, itm, label_info))
     btn_one =   tk.Button(window_add, text="1", command=lambda:button_number_click(1, itm, label_info))
@@ -117,6 +134,8 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     btn_seven = tk.Button(window_add, text="7", command=lambda:button_number_click(7, itm, label_info))
     btn_eight = tk.Button(window_add, text="8", command=lambda:button_number_click(8, itm, label_info))
     btn_nine =  tk.Button(window_add, text="9", command=lambda:button_number_click(9, itm, label_info))
+    btn_comma =  tk.Button(window_add, text=",", command=lambda:button_comma_click(itm, label_info))
+    btn_del =  tk.Button(window_add, text="<-", command=lambda:button_delete_click(itm, label_info))
 
     btn_food =   tk.Button(window_add, text="mat", command=lambda:button_category_click('mat', itm, label_category))
     btn_coffe =  tk.Button(window_add, text="kaffe", command=lambda:button_category_click('kaffe', itm, label_category))
@@ -128,6 +147,7 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     label_info.grid(row=0, column=0)
     # label_category.grid(row=0, column=1)
     button_add.grid(    row=1, column=6, rowspan=3, sticky="NSWE")
+    button_cancel.grid( row=4, column=6, sticky="NSEW")
 
     btn_food.grid(  row=1, column=0, sticky="NSEW")
     btn_coffe.grid( row=2, column=0, sticky="NSEW")
@@ -143,16 +163,18 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     btn_eight.grid( row=3, column=3, sticky="NSEW")
     btn_nine.grid(  row=3, column=4, sticky="NSEW")
     btn_zero.grid(  row=4, column=3, sticky="NSEW")
+    btn_del.grid(   row=4, column=4, sticky="NSEW")
 
 
 if __name__ == '__main__':
     version = '1.0.0'
+    author = "Magnus"
     db = db_class()
     db.load_file('db.txt')
 
     top = tk.Tk()
     # top.attributes('-zoomed', True)
-    top.attributes('-alpha', True)
+    top.attributes('-topmost', True)
     top.title(f"kvitto registrering, pid: {os.getpid()} v{version}")
 
     # print(font.families())
@@ -161,6 +183,8 @@ if __name__ == '__main__':
     top.rowconfigure(1, minsize=50)
     top.rowconfigure(2, minsize=100)
     top.rowconfigure(3, minsize=50)
+
+    top.btn_test = tk.Button(top, text="test button")
 
     var = tk.StringVar(value=db.get_items())
     lb_items = tk.Listbox(top, height=20, width=30, listvariable = var, font=('Courier New', 20))
@@ -171,4 +195,5 @@ if __name__ == '__main__':
     lb_items.grid(row = 0, column = 0, sticky = 'NSWE')
     label_sum.grid(row = 1, column = 0, sticky = 'NSWE')
     button_show_add_window.grid(row = 2, column = 0, sticky = 'NSWE')
+    top.btn_test.grid(row= 3, column = 0, sticky = "NSWE")
     top.mainloop()
