@@ -195,5 +195,5 @@ if __name__ == '__main__':
     lb_items.grid(row = 0, column = 0, sticky = 'NSWE')
     label_sum.grid(row = 1, column = 0, sticky = 'NSWE')
     button_show_add_window.grid(row = 2, column = 0, sticky = 'NSWE')
-    top.btn_test.grid(row= 3, column = 0, sticky = "NSWE")
+    # top.btn_test.grid(row= 3, column = 0, sticky = "NSWE")
     top.mainloop()
