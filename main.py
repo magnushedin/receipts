@@ -263,14 +263,14 @@ if __name__ == '__main__':
     lb_items.bind('<<ListboxSelect>>', lambda event:update_listbox(db, event.widget))
     lb_items.see(lb_items.size())
     label_sum =              tk.Label(top, text=f'summa: {db.get_total()} kr', font=('Courier New', 20))
-    button_show_add_window = tk.Button(top, text='add item', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
+    button_show_add_window = tk.Button(top, text='Lägg till ny', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
 
     sum_list = tk.StringVar(value=sum_list_tmp)
     lb_sum = tk.Listbox(top, height=20, width=25, listvariable=sum_list, font=('Courier New', 20))
     lb_sum.see(lb_sum.size())
 
     lb_items.grid(              row = 0, column = 0, sticky = 'NSWE')
-    lb_sum.grid(                row = 0, column = 2, sticky = "NSWE")
+    # lb_sum.grid(                row = 0, column = 2, sticky = "NSWE")
     label_sum.grid(             row = 1, column = 0, sticky = 'NSWE')
     button_show_add_window.grid(row = 2, column = 0, sticky = 'NSWE')
     # top.btn_test.grid(row= 3, column = 0, sticky = "NSWE")
