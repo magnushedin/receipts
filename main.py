@@ -20,6 +20,7 @@ class item_class:
         return self.sum
 
     def delete(self):
+        # Delete latest input from the sum
         self.sum = int(self.sum / 10)
 
 
@@ -27,12 +28,17 @@ class db_class:
     def __init__(self, filename='db.txt'):
         self.db = []
         self.filename = filename
+        self.monthes = []
 
     def load_file(self, filename):
         f = open(filename, 'r')
         for line in f:
             (date, cat, sum) = line.split(' ')
             self.db.append(item_class(sum=int(sum), cat=cat, date=date))
+            month = date[:7]
+            if (month not in self.monthes):
+                self.monthes.append(date[:7])
+
         f.close()
 
     def write_to_file(self, filename, item):
@@ -52,11 +58,42 @@ class db_class:
     def get_items(self):
         return [f'{item.date}: {item.category} = {item.sum}' for item in self.db]
 
+    def get_monthes(self):
+        return self.monthes
+
+    def get_month_summary(self, month):
+        return_list = [f'{month}: {self.get_total_for_month(month)} kr']
+        item_list = []
+        categories = []
+        for item in self.db:
+            if (month in item.date):
+                item_list.append(item)
+                if (item.category not in categories):
+                    categories.append(item.category)
+
+        for cat in categories:
+            sum = 0
+            for item in item_list:
+                if cat in item.category:
+                    sum += item.get_sum()
+            return_list.append(f'   {cat}: {sum} kr')
+
+        return return_list
+
+
     def get_total(self):
         sum = 0
         for item in self.db:
             sum += item.sum
         return sum
+
+    def get_total_for_month(self, month):
+        sum = 0
+        for item in self.db:
+            if month in item.date:
+                sum += item.get_sum()
+        return sum
+
 
 def update_label_sum(db, lbl_sum):
     label_sum.config(text = f'summa: {db.get_total()}')
@@ -134,7 +171,7 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     listbox_category = tk.Listbox(window_add, height=5, width=7, listvariable = cat, font=('Courier New', 40))
 
     window_add.wm_attributes("-topmost", True) #always on top
-    listbox_category.selection_set(first=0)
+    listbox_category.selection_set(first=0) # Select first row as default
     #window_add.grab_set_global()
     # window_add.protocol("WM_DELETE_WINDOW", lambda: update_listbox(db, lb_items))
     label_info =       tk.Label(window_add, text=itm.sum, font=('Courier New', 30))
@@ -154,10 +191,6 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     btn_nine =  tk.Button(window_add, text="9", command=lambda:button_number_click(9, itm, label_info))
     btn_comma =  tk.Button(window_add, text=",", command=lambda:button_comma_click(itm, label_info))
     btn_del =  tk.Button(window_add, text="<-", command=lambda:button_delete_click(itm, label_info))
-
-    btn_food =   tk.Button(window_add, text="mat", command=lambda:button_category_click('mat', itm, label_category))
-    btn_coffe =  tk.Button(window_add, text="kaffe", command=lambda:button_category_click('kaffe', itm, label_category))
-    btn_bubbel = tk.Button(window_add, text="bubbel", command=lambda:button_category_click('bubbel', itm, label_category))
 
     # buttons = range(0, 10)
     # for button in buttons:
@@ -190,6 +223,11 @@ if __name__ == '__main__':
     author = "Magnus"
     db = db_class()
     db.load_file('db.txt')
+    sum_list_tmp = []
+    for month in db.get_monthes():
+        for item in db.get_month_summary(month):
+            sum_list_tmp.append(item)
+        sum_list_tmp.append('---')
 
     top = tk.Tk()
     # top.attributes('-zoomed', True)
@@ -202,6 +240,7 @@ if __name__ == '__main__':
     top.rowconfigure(1, minsize=50)
     top.rowconfigure(2, minsize=100)
     top.rowconfigure(3, minsize=50)
+    top.columnconfigure(1, minsize=20)
 
     top.btn_test = tk.Button(top, text="test button")
 
@@ -212,7 +251,12 @@ if __name__ == '__main__':
     label_sum =              tk.Label(top, text=f'summa: {db.get_total()} kr', font=('Courier New', 20))
     button_show_add_window = tk.Button(top, text='add item', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
 
+    sum_list = tk.StringVar(value=sum_list_tmp)
+    lb_sum = tk.Listbox(top, height=20, width=25, listvariable=sum_list, font=('Courier New', 20))
+    lb_sum.see(lb_sum.size())
+
     lb_items.grid(              row = 0, column = 0, sticky = 'NSWE')
+    lb_sum.grid(                row = 0, column = 2, sticky = "NSWE")
     label_sum.grid(             row = 1, column = 0, sticky = 'NSWE')
     button_show_add_window.grid(row = 2, column = 0, sticky = 'NSWE')
     # top.btn_test.grid(row= 3, column = 0, sticky = "NSWE")
