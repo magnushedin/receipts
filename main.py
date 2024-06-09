@@ -71,6 +71,8 @@ class db_class:
                 if (item.category not in categories):
                     categories.append(item.category)
 
+        categories.sort()
+
         for cat in categories:
             sum = 0
             for item in item_list:
