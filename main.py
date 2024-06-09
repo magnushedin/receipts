@@ -105,12 +105,29 @@ def update_listbox(db, lb):
     for item in db.get_items():
         lb.insert(tk.END, item)
 
+def get_listbox_sum_list(db):
+    sum_list_tmp = []
+    for month in db.get_monthes():
+        for item in db.get_month_summary(month):
+            sum_list_tmp.append(item)
+        sum_list_tmp.append('---')
+    return sum_list_tmp
+
+def update_listbox_sum(db, lb_sum):
+    tmp_list = get_listbox_sum_list(db)
+    lb_sum.delete(0, tk.END)
+    for itm in tmp_list:
+        lb_sum.insert(tk.END, itm)
+        print(itm)
+
+
 def button_add_item_click(window, db, lb_items, itm, lbl_sum, cat):
     itm.set_category(cat)
     if (itm.get_sum() > 0):
         db.add_item(itm)
         update_listbox(db, lb_items)
         update_label_sum(db, lbl_sum)
+        update_listbox_sum(db, lb_sum)
         lb_items.see(lb_items.size())
     window.destroy()
 
@@ -223,11 +240,8 @@ if __name__ == '__main__':
     author = "Magnus"
     db = db_class()
     db.load_file('db.txt')
-    sum_list_tmp = []
-    for month in db.get_monthes():
-        for item in db.get_month_summary(month):
-            sum_list_tmp.append(item)
-        sum_list_tmp.append('---')
+
+    sum_list_tmp = get_listbox_sum_list(db)
 
     top = tk.Tk()
     # top.attributes('-zoomed', True)
