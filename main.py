@@ -162,6 +162,8 @@ def button_show_add_window_click(db, lb_items, lbl_sum):
     categories = ['mat',
                   'kaffe',
                   'bubbel',
+                  "godis",
+                  "grill"
                   ]
 
     itm = item_class(0)
@@ -265,7 +267,7 @@ if __name__ == '__main__':
     lb_items.bind('<<ListboxSelect>>', lambda event:update_listbox(db, event.widget))
     lb_items.see(lb_items.size())
     label_sum =              tk.Label(top, text=f'summa: {db.get_total()} kr', font=('Courier New', 20))
-    button_show_add_window = tk.Button(top, text='Lägg till ny', font=('Courier New', 20), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
+    button_show_add_window = tk.Button(top, text='Lägg till ny', font=('Courier New', 30), command=lambda: button_show_add_window_click(db, lb_items, label_sum))
 
     sum_list = tk.StringVar(value=sum_list_tmp)
     lb_sum = tk.Listbox(top, height=20, width=25, listvariable=sum_list, font=('Courier New', 20))
