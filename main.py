@@ -59,6 +59,10 @@ class db_class:
         return [f'{item.date}: {item.category} = {item.sum}' for item in self.db]
 
     def get_monthes(self):
+        for itm in self.db:
+            month = itm.date[:7]
+            if month not in self.monthes:
+                self.monthes.append(month)
         return self.monthes
 
     def get_month_summary(self, month):
